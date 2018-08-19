@@ -1,0 +1,45 @@
+{
+  "name": "api-test-bdd-node",
+  "version": "1.0.0",
+  "description": "This is a base project for integration tests for REST APIs using node.js",
+  "scripts": {
+    "tests": "babel-node test/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VitorGarcia23/api-test-bdd-node.git"
+  },
+  "author": "Vitor Ferreira Garcia <vitfgarcia@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/VitorGarcia23/api-test-bdd-node/issues"
+  },
+  "homepage": "https://github.com/VitorGarcia23/api-test-bdd-node#readme",
+  "devDependencies": {
+    "babel-cli": "6.26.0",
+    "babel-preset-env": "1.7.0",
+    "chai": "4.1.2",
+    "mocha": "5.2.0",
+    "mochawesome": "3.0.2",
+    "yargs": "12.0.1",
+    "nyc": "12.0.2",
+    "rimraf": "2.6.2",
+    "sinon": "6.1.4"
+  },
+  "nyc": {
+    "include": [
+      "src"
+    ],
+    "extension": [
+      ".js"
+    ],
+    "reporter": [
+      "text",
+      "html",
+      "json-summary"
+    ],
+    "sourceMap": true,
+    "instrument": true,
+    "report-dir": "test-results/coverage"
+  }
+}
