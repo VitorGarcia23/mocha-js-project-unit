@@ -36,6 +36,9 @@ yarn run tests
   - '--path folderPath' or '-P folderPath' where folderName is the name of the folder where the test files are (suite is the default value).
   - '--test testPattern' or '-T testPattern' where testPattern is the 'name or pattern' of the test you wanna run.
   - '--coverage' or '-C' will generate the coverage report
+  - '--report' or '-R' will generate the test result report
+  - '--env' or '-E' will load, using dotenv, environment variables with the flags passed. (Possible values: [dev,stg]) (Default Value: stg)
+
 
 ### Note that if you pass -F or --file it will be necessary to pass the -P or --path to indicate the folder that the file is present
 

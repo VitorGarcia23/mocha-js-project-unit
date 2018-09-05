@@ -3,6 +3,9 @@ import yargs from 'yargs';
 import { spawnSync } from 'child_process';
 import rimraf from 'rimraf';
 import { promisify } from 'util';
+import dotenv from 'dotenv';
+
+const environments = ['dev', 'stg'];
 
 const rm = promisify(rimraf);
 
@@ -23,19 +26,34 @@ function getParams(args) {
 			value: args.T || args.test,
 			optional: true
 		},
+		env: {
+			arg: '-E or --env',
+			value: args.E || args.env || 'stg'
+		},
 		coverage: {
 			arg: '-C or --coverage',
 			value: args.hasOwnProperty('C') || args.hasOwnProperty('coverage'),
 			optional: true
+		},
+		report: {
+			arg: '-R or --report',
+			value: args.hasOwnProperty('R') || args.hasOwnProperty('report'),
+			optional: true
 		}
 	};
+
+	if (!environments.includes(params.env.value)) {
+		throw new Error(
+			`Environment passed is not valid. Enviroment must be one of the following ${environments}`
+		);
+	}
 
 	if (
 		params.coverage.value &&
 		(params.file.value || params.folder.value || params.test.value)
 	) {
 		throw new Error(
-			`The parameter "coverage" does not accept other parameters`
+			'The parameter "coverage" does not accept other parameters'
 		);
 	}
 
@@ -56,11 +74,13 @@ function getParams(args) {
 
 (async args => {
 	try {
-		const { folder, file, test, coverage } = getParams(args);
+		const { folder, file, test, env, coverage, report } = getParams(args);
+
+		const pathFolder = folder || 'suite';
 
 		const watchTests = file
-			? path.join('test', folder, `${file}.test.js`)
-			: path.join('test', 'suite');
+			? path.join('test', pathFolder, `${file}.test.js`)
+			: path.join('test', pathFolder);
 
 		const command = [
 			'--opts',
@@ -69,9 +89,20 @@ function getParams(args) {
 			'--recursive'
 		];
 
+		if (report) {
+			command.push(
+				'--reporter mochawesome',
+				'--reporter-options timestamp=true,reportDir=test-results/reports,reportFilename=tests'
+			);
+		}
+
 		if (test) {
 			command.push('-g', test);
 		}
+
+		dotenv.config({ path: `test/config/environments/${env}.env` });
+
+		console.log('\x1b[33m', `Running tests on '${env}' environment`);
 
 		if (coverage) {
 			spawnSync('nyc mocha', command, { stdio: 'inherit', shell: true });
